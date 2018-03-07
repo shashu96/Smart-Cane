@@ -4,22 +4,23 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.android.smartcane.MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.example.android.smartcane.MainActivity">
 
     <Button
+        android:id="@+id/button_1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="PANIC ALARAM"
-        android:textSize="40sp"
+        android:layout_weight="1"
         android:background="#F44336"
-        android:layout_weight="1" />
+        android:text="PANIC ALARAM"
+        android:textSize="40sp" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="GPS NAVIGATION"
-        android:textSize="40sp"
+        android:layout_weight="1"
         android:background="#4CAF50"
-        android:layout_weight="1"/>
+        android:text="GPS NAVIGATION"
+        android:textSize="40sp" />
 </LinearLayout>
