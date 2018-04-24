@@ -8,33 +8,35 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.Locale;
 
 import me.aflak.bluetooth.Bluetooth;
 
-public class BluetoothFragment extends Fragment implements Bluetooth.CommunicationCallback {
+public class BluetoothFragment extends Fragment implements Bluetooth.CommunicationCallback,TextToSpeech.OnInitListener {
 
     private String name;
     int pos=0;
     private Bluetooth b;
     private EditText message;
-    private Button send;
+    //private Button send;
     private TextView text;
     private ScrollView scrollView;
     private boolean registered=false;
     private BluetoothDevice deviceToPair;
+    private TextToSpeech tts;
 
     @Nullable
     @Override
@@ -43,11 +45,11 @@ public class BluetoothFragment extends Fragment implements Bluetooth.Communicati
 
         text = view.findViewById(R.id.text);
         message = view.findViewById(R.id.message);
-        send = view.findViewById(R.id.send);
+        //send = view.findViewById(R.id.send);
         scrollView = view.findViewById(R.id.scrollView);
 
         text.setMovementMethod(new ScrollingMovementMethod());
-        send.setEnabled(false);
+        //send.setEnabled(false);
 
 
         return view;
@@ -63,14 +65,14 @@ public class BluetoothFragment extends Fragment implements Bluetooth.Communicati
         b = new Bluetooth(getActivity());
         b.enableBluetooth();
         b.setCommunicationCallback(this);
-
+         tts = new TextToSpeech(getContext(),this);
         tryConnecting();
 
 
         Display("Connecting...");
 //        b.connectToDevice(b.getPairedDevices().get(pos));
 
-        send.setOnClickListener(new View.OnClickListener() {
+        /*send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String msg = message.getText().toString();
@@ -78,7 +80,7 @@ public class BluetoothFragment extends Fragment implements Bluetooth.Communicati
                 b.send(msg);
                 Display("You: "+msg);
             }
-        });
+        });*/
 
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         getActivity().registerReceiver(mReceiver, filter);
@@ -115,9 +117,22 @@ public class BluetoothFragment extends Fragment implements Bluetooth.Communicati
         }
     }
 
+    /*@Override
+    public void onStop() {
+        super.onStop();
+
+        b = new Bluetooth(getActivity());
+        b.disableBluetooth();
+
+    }*/
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        b = new Bluetooth(getActivity());
+        b.disableBluetooth();
+
         if(registered) {
             getActivity().unregisterReceiver(mReceiver);
             registered=false;
@@ -130,6 +145,13 @@ public class BluetoothFragment extends Fragment implements Bluetooth.Communicati
             @Override
             public void run() {
                 text.append(s + "\n");
+
+                tts.setLanguage(Locale.US);
+                //tts.speak("Text to say aloud", TextToSpeech.QUEUE_ADD, null, utteranceId);
+
+
+                    tts.speak(s, TextToSpeech.QUEUE_FLUSH, null, null);
+
                 scrollView.fullScroll(View.FOCUS_DOWN);
             }
         });
@@ -138,12 +160,12 @@ public class BluetoothFragment extends Fragment implements Bluetooth.Communicati
     @Override
     public void onConnect(BluetoothDevice device) {
         Display("Connected to "+device.getName()+" - "+device.getAddress());
-        getActivity().runOnUiThread(new Runnable() {
+        /*getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 send.setEnabled(true);
             }
-        });
+        });*/
     }
 
     @Override
@@ -155,7 +177,8 @@ public class BluetoothFragment extends Fragment implements Bluetooth.Communicati
 
     @Override
     public void onMessage(String message) {
-        Display(name+": "+message);
+        //Display(name+": "+message);
+        Display(message);
     }
 
     @Override
@@ -210,4 +233,8 @@ public class BluetoothFragment extends Fragment implements Bluetooth.Communicati
     };
 
 
+    @Override
+    public void onInit(int i) {
+
+    }
 }
