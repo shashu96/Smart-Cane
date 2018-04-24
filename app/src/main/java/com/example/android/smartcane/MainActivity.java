@@ -1,36 +1,50 @@
 package com.example.android.smartcane;
 
 
+import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Button;
-import android.telephony.SmsManager;
-
 
 public class MainActivity extends AppCompatActivity {
 
+    BluetoothDevice deviceToPair;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button startBtn = (Button) findViewById(R.id.button_1);
-        startBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+       /* Bluetooth bluetooth= new Bluetooth(this);
+        bluetooth.enableBluetooth();
+       List<BluetoothDevice> devices =  bluetooth.getPairedDevices();
 
-                String messageToSend = "Its EMERGENCY!!\nCall me if you got this message";
-                String number = "9632123381";
+       for(BluetoothDevice device:devices)
+       {
+           if(device.getName().equalsIgnoreCase("HC-05"))
+           {
+               deviceToPair =device;
+           }
 
-                SmsManager.getDefault().sendTextMessage(number, null, messageToSend, null,null);
+       }
 
-                number = "9845724355";
-                SmsManager.getDefault().sendTextMessage(number, null, messageToSend, null,null);
+       if(deviceToPair!=null)
+       {
+           bluetooth.connectToDevice(deviceToPair);
+       }else{
+           Toast.makeText(this,"Device not found",Toast.LENGTH_SHORT).show();
+       }
+*/
+        FragmentManager fragmentManager= getSupportFragmentManager();
+        Fragment fragment= fragmentManager.findFragmentById(R.id.viewpager_container);
 
-                number = "9008346385";
-                SmsManager.getDefault().sendTextMessage(number, null, messageToSend, null,null);
-            }
-        });
+        if(fragment==null)
+        {
+            fragment=new com.example.android.smartcane.ViewPagerFragment();
+            fragmentManager.beginTransaction()
+                    .add(R.id.viewpager_container,fragment)
+                    .commit();
+
+        }
     }
 }
